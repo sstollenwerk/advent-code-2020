@@ -1,5 +1,3 @@
-type Num = u32;
-
 type Password = Vec<char>;
 type Row = (usize, usize, char, Password);
 
@@ -23,19 +21,29 @@ fn count<T: PartialEq>(xs: &[T], c: &T) -> usize {
     xs.iter().filter(|n| n == &c).count()
 }
 
-fn valid(r: &Row) -> bool {
+fn valid1(r: &Row) -> bool {
     let (low, hi, check, xs) = r.clone();
     let c = count(&xs, &check);
     low <= c && c <= hi
 }
 
-pub fn part1(base: &str) -> usize {
-    let data = parse(base);
-    data.iter().filter(|n| valid(n)).count()
+fn valid2(r: &Row) -> bool {
+    let (low, hi, check, xs) = r;
+
+    [low, hi]
+        .into_iter()
+        .filter(|n| xs[*n - 1] == *check)
+        .count()
+        == 1
 }
 
-pub fn part2(base: &str) -> Num {
+pub fn part1(base: &str) -> usize {
+    let data = parse(base);
+    data.iter().filter(|n| valid1(n)).count()
+}
+
+pub fn part2(base: &str) -> usize {
     let data = parse(base);
 
-    todo!();
+    data.iter().filter(|n| valid2(n)).count()
 }

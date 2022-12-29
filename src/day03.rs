@@ -37,14 +37,21 @@ fn r#loop(p: Position, s: Size) -> Position {
 
 pub fn part1(base: &str) -> usize {
     let (size, trees) = parse(base);
-    let path: Positions = (1..(size.1))
-        .map(|n| r#loop(Position::new(3 * n, n), size))
-        .collect();
+    let path: Positions = posses(size, (3, 1));
     (&path & &trees).len()
 }
 
-pub fn part2(base: &str) -> Num {
-    let data = parse(base);
+fn posses(s: Size, slope: (Num, Num)) -> Positions {
+    (1..)
+        .map(|n| r#loop(Position::new(slope.0 * n, slope.1 * n), s))
+        .take_while(|x| x.im < s.1)
+        .collect()
+}
 
-    todo!();
+pub fn part2(base: &str) -> Num {
+    let (size, trees) = parse(base);
+    let p = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
+    p.into_iter()
+        .map(|s| (&posses(size, s) & &trees).len() as Num)
+        .product()
 }

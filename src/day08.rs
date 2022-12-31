@@ -40,6 +40,10 @@ fn interpret(xs: &[Operation]) -> Result<Num, Num> {
 
     let mut i = 0;
     loop {
+        if i == xs.len() {
+            break;
+        }
+
         let out = seen.insert(i);
         if !out {
             return Err(acc);
@@ -47,15 +51,17 @@ fn interpret(xs: &[Operation]) -> Result<Num, Num> {
         match xs[i] {
             Operation::Acc(n) => {
                 acc += n;
+                i += 1;
             }
             Operation::Jmp(n) => {
-                i = ((i as Num) + (n - 1)) as usize;
+                i = ((i as Num) + (n)) as usize;
             }
-            Operation::Nop(_n) => {}
+            Operation::Nop(_n) => {
+                i += 1;
+            }
         }
-        i += 1
     }
-    todo!();
+    Ok(acc)
 }
 
 pub fn part1(base: &str) -> Num {
@@ -67,5 +73,24 @@ pub fn part1(base: &str) -> Num {
 pub fn part2(base: &str) -> Num {
     let data = parse(base);
 
-    todo!();
+    for (i, el) in data.iter().enumerate() {
+        let mut poss = data.clone();
+        match el {
+            Operation::Acc(_n) => {
+                continue;
+            }
+            Operation::Jmp(n) => {
+                poss[i] = Operation::Nop(*n);
+            }
+            Operation::Nop(n) => {
+                poss[i] = Operation::Jmp(*n);
+            }
+        };
+        let res = interpret(&poss);
+        if let Ok(x) = res {
+            return x;
+        }
+    }
+
+    unreachable!();
 }

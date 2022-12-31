@@ -1,5 +1,3 @@
-type Num = u32;
-
 use std::collections::HashSet;
 
 type Passenger = HashSet<char>;
@@ -20,13 +18,21 @@ fn any(g: &Group) -> Passenger {
         .unwrap()
 }
 
+fn all(g: &Group) -> Passenger {
+    g.iter()
+        .cloned()
+        .reduce(|acc, e| &acc & &e)
+        .unwrap()
+}
+
+
 pub fn part1(base: &str) -> usize {
     let data = parse(base);
     data.iter().map(any).map(|x| x.len()).sum()
 }
 
-pub fn part2(base: &str) -> Num {
+pub fn part2(base: &str) -> usize {
     let data = parse(base);
 
-    todo!();
+    data.iter().map(all).map(|x| x.len()).sum()
 }

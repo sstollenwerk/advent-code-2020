@@ -2,6 +2,8 @@ type Num = u32;
 
 type Seat = (Num, Num);
 
+type SeatRange = (Num, Num);
+
 #[derive(Debug, Eq, PartialEq, Clone, Hash, Copy)]
 enum Bisect {
     Upper,
@@ -56,6 +58,22 @@ fn id(s: Seat) -> Num {
     row * 8 + column
 }
 
+fn ranges(xs: &[SeatRange]) -> Vec<SeatRange> {
+    let mut xs: Vec<Option<SeatRange>> = xs.iter().cloned().map(Some).collect();
+    xs.sort_by_key(|x| x.unwrap());
+
+    for i in 0..(xs.len() - 1) {
+        let (a, b) = xs[i].unwrap();
+        let (c, d) = xs[i + 1].unwrap();
+        if b >= c {
+            let p = (a.min(c), b.max(d));
+            xs[i + 1] = Some(p);
+            xs[i] = None
+        }
+    }
+    xs.into_iter().flatten().collect()
+}
+
 pub fn part1(base: &str) -> Num {
     let data = parse(base);
     data.iter().map(as_seat).map(id).max().unwrap()
@@ -64,5 +82,14 @@ pub fn part1(base: &str) -> Num {
 pub fn part2(base: &str) -> Num {
     let data = parse(base);
 
-    todo!();
+    let rx: Vec<SeatRange> = data
+        .iter()
+        .map(as_seat)
+        .map(id)
+        .map(|x| (x, x + 1))
+        .collect();
+
+    let groups = ranges(&rx);
+    assert!(groups.len() == 2);
+    groups[0].1
 }

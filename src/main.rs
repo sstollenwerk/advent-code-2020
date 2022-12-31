@@ -1,8 +1,8 @@
 use std::fs;
 
-mod day07;
+mod day08;
 mod utility;
-use day07::{part1, part2};
+use day08::{part1, part2};
 
 fn read_day(day: i32) -> String {
     let filename = to_filename(day);
@@ -16,7 +16,7 @@ fn to_filename(day: i32) -> String {
 }
 
 fn main() {
-    let data = read_day(7);
+    let data = read_day(8);
     println!("{:?}", part1(&data));
     println!("{:?}", part2(&data));
 }
